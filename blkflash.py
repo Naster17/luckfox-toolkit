@@ -114,7 +114,7 @@ def write_once(blk, name):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Process an image file and a device.")
+    parser = argparse.ArgumentParser(description="Luckfox SD Card Flasher")
 
     parser.add_argument('-d', "--device", metavar="DEV", help="Device path (ex: /dev/sdX)", required=True)
     parser.add_argument('-i', "--image", metavar="IMG", help="Write special image (ex: boot.img)")
