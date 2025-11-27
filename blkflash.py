@@ -9,7 +9,7 @@ import argparse
 
 def true_size(s):
     u = {'B': 1, 'K': 1024, 'M': 1024*1024, 'G': 1024*1024*1024}
-    if m := re.search('(\d+)([BKMG])', s):
+    if m := re.search(r'(\d+)([BKMG])', s):
         return int(m.group(1)) * u[m.group(2)]
     return 0
 
@@ -25,10 +25,10 @@ def nice_size(n):
 def dd(image, dev, offset):
     cmd = ['dd', f"if={image}", f"of={dev}", "bs=1k", f"seek={offset//1024}"]
     try:
-        res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     except subprocess.CalledProcessError as e:
-        print(f"ERROR: {e}", e.stderr)
-        sys.exit(-1)
+        print(f"DD ERROR: {e}", e.stderr)
+        sys.exit(0)
 
 
 def check_exits(file):
@@ -116,8 +116,8 @@ def write_once(blk, name):
 def main():
     parser = argparse.ArgumentParser(description="Process an image file and a device.")
 
-    parser.add_argument('-d', "--device", metavar="DEV", help="Device path (e.g., /dev/sdX)", required=True)
-    parser.add_argument('-i', "--image", metavar="IMG", help="Write special image (e.g., boot.img)")
+    parser.add_argument('-d', "--device", metavar="DEV", help="Device path (ex: /dev/sdX)", required=True)
+    parser.add_argument('-i', "--image", metavar="IMG", help="Write special image (ex: boot.img)")
     parser.add_argument('-c', "--confident", action="store_true", help="Disable warnings/alerts")
 
     args = parser.parse_args()
