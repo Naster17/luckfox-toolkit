@@ -64,9 +64,8 @@ def write_once(device, image_name):
                 image, size, offset = parse_part(part)
 
                 if image_name == image:
-                    check_exits(image)  # check if image exists in current directory
-                    adb_dd(device, mmcblk+f"p{blk_part}", image)
-
+                    check_exits(image)
+                    adb_exec(device, ["shell", f'dd if=/{image} of=/dev/{mmcblk}p{blk_part} bs=1k'])
                     log(mmcblk + f"p{blk_part}", image, size)
                     return
 
@@ -76,47 +75,19 @@ def write_once(device, image_name):
     file_env.close()
 
 
-def adb_dd(device, blk, image):
-    print("Flashing partition in adb...")
-
-    cmd = ["adb", "shell", f'dd if=/tmp/{image} of=/dev/{blk} bs=1k']
+def adb_exec(device, command):
+    cmd = ["adb"] + command
     if device != "":
-        cmd = ["adb", "-s", str(device), "shell", f'dd if=/tmp/{image} of=/dev/{blk} bs=1k']
+        cmd = ["adb", "-s", str(device)] + command
     try:
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
         if VERBOSE:
-            print(result.stdout, result.stderr)
-    except Exception as e:
-        print(f"ADB DD ERROR: {e}", e.stderr)
-        sys.exit(0)
-
-
-def adb_push(device, image):
-    print("Pushing image to system...")
-
-    cmd = ["adb", "push", str(image), "/"]
-    if device != "":
-        cmd = ["adb", "-s", str(device), "push", str(image), "/tmp/"]
-    try:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
-        if VERBOSE:
-            print(result.stdout, result.stderr)
-    except Exception as e:
-        print(f"ADB PUSH ERROR: {e}", e.stderr)
-        sys.exit(0)
-
-
-def adb_reboot(device):
-    print("Rebooting the system...")
-
-    cmd = ["adb", "shell", "reboot"]
-    if device != "":
-        cmd = ["adb", "-s", str(device), "shell", "reboot"]
-    try:
-        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
-    except Exception as e:
-        print(f"ADB REBOOT ERROR: {e}", e.stderr)
-        sys.exit(0)
+            print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("ADB ERROR:")
+        print("CMD:", " ".join(cmd))
+        print(e.stdout, e.stderr)
+        sys.exit(1)
 
 
 def main():
@@ -126,14 +97,24 @@ def main():
     parser.add_argument('-d', "--device", metavar="DEV", help="ADB device id (ex: 9ad1s342)", default="")
     parser.add_argument('-i', "--image", metavar="IMG", help="Image (ex: boot.img)", required=True)
     parser.add_argument('-v', "--verbose", action="store_true", help="Print more verbose output")
+    parser.add_argument('-c', "--confident", action="store_true", help="Disable warnings/alerts")
 
     args = parser.parse_args()
     if args.verbose:
         VERBOSE = True
 
-    adb_push(args.device, args.image)
+    print(f"Pushing {args.image} to / ...")
+    adb_exec(args.device, ["push", args.image, "/"])
+
+    print("Flasing on device...")
     write_once(args.device, args.image)
-    adb_reboot(args.device)
+
+    print("Rebooting device...")
+    adb_exec(args.device, ["shell", "reboot"])
+
+    # adb_push(args.device, args.image)
+    # write_once(args.device, args.image)
+    # adb_reboot(args.device)
 
 
 if __name__ == "__main__":
