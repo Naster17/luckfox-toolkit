@@ -70,7 +70,7 @@ def write_all(blk):
     file_env = open(".env.txt")
 
     for line in file_env.readlines():
-        if m := re.search(r'(blkdevparts|sd_parts)=(\w+)', line):
+        if m := re.search(r'(blkdevparts)=(\w+)', line):
             mmcblk = m.group(2)
 
             partitions = re.sub(r'blkdevparts=\w+:', '', line).split(',')
