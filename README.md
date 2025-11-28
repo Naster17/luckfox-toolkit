@@ -8,3 +8,9 @@ Set of "quality of life" scripts and tools for luckfox developing
 ./blkflash.py -d /dev/sdb -i boot.img # flash special image to device
 ./blkfalsh.py --confident ... # disable alerts/warnings if you know what you do xD
 ```
+```adbota.py``` - Script for perform OTA updates via ADB (keep **.env.txt** in same dir)  
+```bash
+./adbota.py -i boot.img # update boot
+./adbota.py -d 9f5teda -i env.img # if more then one device connected use --device
+./adbota.py -v -i boot.img # verbose output
+```
