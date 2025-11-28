@@ -83,6 +83,7 @@ def adb_exec(device, command):
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True)
         if VERBOSE:
             print(result.stdout)
+        return result.stdout
     except subprocess.CalledProcessError as e:
         print("ADB ERROR:")
         print("CMD:", " ".join(cmd))
@@ -97,17 +98,23 @@ def main():
     parser.add_argument('-d', "--device", metavar="DEV", help="ADB device id (ex: 9ad1s342)", default="")
     parser.add_argument('-i', "--image", metavar="IMG", help="Image (ex: boot.img)", required=True)
     parser.add_argument('-v', "--verbose", action="store_true", help="Print more verbose output")
-    parser.add_argument('-c', "--confident", action="store_true", help="Disable warnings/alerts")
 
     args = parser.parse_args()
     if args.verbose:
         VERBOSE = True
 
-    print(f"Pushing {args.image} to / ...")
+    if "root" not in adb_exec(args.device, ["shell", "whoami"]):
+        print("require root privalege on adb")
+        exit(1)
+
+    print(f"Pushing {args.image} to device / ...")
     adb_exec(args.device, ["push", args.image, "/"])
 
-    print("Flasing on device...")
+    print(f"Flasing {args.image} on device...")
     write_once(args.device, args.image)
+
+    print("Cleaning device...")
+    adb_exec(args.device, ["shell", f"rm -rf /{args.image}"])
 
     print("Rebooting device...")
     adb_exec(args.device, ["shell", "reboot"])
