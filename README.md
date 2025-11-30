@@ -16,8 +16,8 @@ Set of "quality of life" scripts and tools for luckfox developing
 ```
 ```mkenv.py``` - Script for making env.img from **.env.txt** (ex: for partitions etc)  
 ```bash
+# if you resize the middle partitions like boot, oem, you have to rewrite everything to the SD card with blkflash NO OTA
 ./mkenv.py # automaticaly owerwrite env.img using .env.txt in current dir
 ./mkenv.py -s 0x8000 -p 0x0 -o env.img .env.txt # 32kb img size with 0x00 fill
 ./mkenv.py -o env_new.img # write in new .img
 ```
-**Note: if you resize the middle partitions (boot, oem,...) you have to rewrite everything to the SD card with blkflash.py**
