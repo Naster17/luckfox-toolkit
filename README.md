@@ -1,5 +1,5 @@
 # luckfox-toolkit
-Set of "quality of life" scripts and tools for luckfox developing
+#### I'm open to suggestions for what other tools to add
 
 ## Toolkit
 ```blkflash.py``` - Script for flashing to a block device using the default type **.env.txt**
