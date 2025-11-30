@@ -14,3 +14,9 @@ Set of "quality of life" scripts and tools for luckfox developing
 ./adbota.py -d 9f5teda -i env.img # if more then one device connected use --device
 ./adbota.py -v -i boot.img # verbose output
 ```
+```mkenv.py``` - Script for making env.img from **.env.txt** (ex: for partitions etc)  
+```bash
+./mkenv.py # automaticaly owerwrite env.img using .env.txt in current dir
+./mkenv.py -s 0x8000 -p 0x0 -o env.img .env.txt # 32kb img size with 0x00 fill
+./mkenv.py -o env_new.img # write in new .img
+```
