@@ -76,13 +76,7 @@ def main():
         exit(1)
 
     install_bare(args.device, args.path)
-
-    # print(f"Pushing {args.image} to device / ...")
-    # adb_exec(args.device, ["push", args.image, "/"])
-
-    # adb_push(args.device, args.image)
-    # write_once(args.device, args.image)
-    # adb_reboot(args.device)
+    print("Finised...")
 
 
 if __name__ == "__main__":
