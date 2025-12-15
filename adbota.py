@@ -103,7 +103,7 @@ def main():
     if args.verbose:
         VERBOSE = True
 
-    if "root" not in adb_exec(args.device, ["shell", "whoami"]):
+    if "root" not in adb_exec(args.device, ["shell", "id"]):
         print("require root privalege on adb")
         exit(1)
 
