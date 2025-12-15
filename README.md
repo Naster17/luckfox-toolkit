@@ -26,5 +26,5 @@
 # when build kernel: make -j$(nproc) INSTALL_MOD_PATH=/path/to/output/ modules_install
 ./modinstall.py -p /path/to/output/ # upload all kernel modules from install path
 ./modinstall.py -d 9f5teda -p /path/to/output/ # to specific device
-# now you can fully modprope ex: modprope rknpu 
+# now you can fully modprope ex: modprope rknpu OR tree /lib/modules/
 ```
